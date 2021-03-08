@@ -27,6 +27,74 @@ function makeQuote(numItem, item) {
     `);
 }
 
+function makePopularVideos(numItem, item, idElement) {
+    let active = "";
+    if (!numItem) {
+        active = "active";
+    }
+    $(idElement).append(
+        `
+        <div class="card mr-3" style="width: 16rem;">
+            <div class=" d-flex align-items-center justify-content-center">
+                <img src="${item.thumb_url}" alt="" class="card-img-top" />
+                <img src="./images/play.png" alt="" class="position-absolute icon__size" />
+            </div>
+            <div class="card-body">
+                <h5 class="card-title font-weight-bold text-left">${item.title}</h5>
+                <p class="card-text text-muted text-left">${item["sub-title"]}</p>
+                <div class="d-flex align-items-center">
+                    <div class="mr-3">
+                        <img src=${item.author_pic_url}  alt="" class="carousel__user__img rounded-circle">
+                    </div>
+                    <div class="carousel__user color-pink">
+                        ${item.author}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mt-3 align-items-center">
+                    <img src="./images/star_on.png" alt="" class="star" />
+                    <img src="./images/star_on.png" alt="" class="star" />
+                    <img src="./images/star_on.png" alt="" class="star" />
+                    <img src="./images/star_on.png" alt="" class="star" />
+                    <img src="./images/star_off.png" alt="" class="star" />
+                    <div class="color-pink carousel-time">${item.duration}</div>
+                </div>
+            </div>
+        </div>`
+    );
+}
+
+function latestVideos() {
+    $.ajax({
+        dataType: "json",
+        beforeSend: isLoading(true, "#latestVideos"),
+        contentType: "application/json",
+        url: `https://smileschool-api.hbtn.info/latest-videos`,
+        success: function (result) {
+            $("#latestVideos").empty()
+            isLoading(false, "#latestVideos")
+            result.forEach((item, i) => {
+                makePopularVideos(i, item, "#latestVideos")
+            });
+        }
+    });
+}
+
+function popularVideos() {
+    $.ajax({
+        dataType: "json",
+        beforeSend: isLoading(true, "#makeVideos"),
+        contentType: "application/json",
+        url: `https://smileschool-api.hbtn.info/popular-tutorials`,
+        success: function (result) {
+            $("#makeVideos").empty()
+            isLoading(false, "#makeVideos")
+            result.forEach((item, i) => {
+                makePopularVideos(i, item, "#makeVideos")
+            });
+        }
+    });
+}
+
 function quote() {
     $.ajax({
         dataType: "json",
@@ -45,4 +113,6 @@ function quote() {
 
 $(document).ready(function () {
     quote();
+    popularVideos();
+    latestVideos();
 });
